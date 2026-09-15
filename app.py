@@ -1,18 +1,20 @@
 import streamlit as st
-import json
+import pandas as pd
 import requests
+import json
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout='wide')
+st.title('⊹ ࣪ ˖Capture um Pokemon⊹ ࣪ ˖')
 
 with open('pokemon_index.json', 'r', encoding='utf-8') as arquivo:
     nomes_pokemons = json.load(arquivo)
-
-nome = st.selectbox('Escolha um Pokemon', nomes_pokemons.values())
+## nome dos pokemons
+nome = st.selectbox("Escolha um Pokemon: ", nomes_pokemons.values())
 
 url = f'https://pokeapi.co/api/v2/pokemon/{nome}'
 dados_pokemon = requests.get(url).json()
 
-col1, col2, col3 = st.columns(3)
+col1,col2,col3 = st.columns(3)
 
 peso = dados_pokemon['weight'] /10
 altura = dados_pokemon['height'] /10
@@ -30,22 +32,21 @@ with col3:
     st.image(dados_pokemon['sprites']['front_shiny'], width=400)
     st.write('Shiny')
 
-col1, col2, col3 = st.columns(3)
+col1,col2,col3 = st.columns(3)
+
 with col1:
-    st.metric('Altura', f'{altura} M')
-
+    st.metric("A Altura é", f"{altura} M")
 with col2:
-    st.metric('IMC', imc)
-
+    st.metric("O Peso é ",f"{peso} KG" )
 with col3:
-    st.metric('Peso', f'{peso} KG')
+    st.metric("O IMC é ",f"{imc}")
 
-
-tipos, status, locais, habilidades = st.tabs(['Tipos', 'Status', 'Locais', 'Habilidades'])
+tipos, status, locais, habilidades = st.tabs(["Tipos", "Status","Locais", "Habilidades"])
 
 with tipos:
     for i in dados_pokemon['types']:
         st.markdown(f'- {i['type']['name']}')
+
 
 with status:
     hp, ataque, defesa, ataque_esp, defesa_esp, velocidade = st.columns(6)
@@ -62,11 +63,17 @@ with status:
     with velocidade:
         st.metric('Velocidade', dados_pokemon['stats'][5]['base_stat'])
 
+
 with locais:
     locais = requests.get(dados_pokemon['location_area_encounters']).json()
     for local in locais:
         st.markdown(f'- {local['location_area']['name']}')
 
+
 with habilidades:
     for abilidade in dados_pokemon['abilities']:
-        st.markdown(f'- {abilidade['ability']['name']}')
+        st.markdown(f'- {abilidade['ability']['name']}') 
+
+with tipos:
+    st.write("Teste")
+
